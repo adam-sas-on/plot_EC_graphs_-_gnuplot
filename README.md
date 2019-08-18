@@ -30,7 +30,9 @@ Computes the value of important parameter for Elliptic Curves:
   4*a^3 + 27*b^2 = 32864.0  (-43, 114)
 ```
 > When > 0 then there is only one point for y = 0 and function can be used for Elliptic Curve Cryptography.
+
 > When = 0 then there are 2 points for y = 0
+
 > When < 0 then it has 3 points for y = 0 and graph has 2 separated parts like on the image below:
 
 ![EC graph (two parts)](/images/ec_graph2.png "EC graph (two parts)")
