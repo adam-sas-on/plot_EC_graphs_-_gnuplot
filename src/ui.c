@@ -56,12 +56,16 @@ void printw_equation(struct ec_parameters ec, const char a_or_b){
 	}
 }
 
-void print_menu(const int command, struct ec_parameters ec, const double x_for_y0, const double critical_prop, const char a_or_b){
+void print_menu(const int command, struct ec_parameters ec, const int x_validity, const double critical_prop, const char a_or_b){
+	double *xs_4_y0 = ec.xs_4_y0;
 	int row = ROW_BEGIN + 1;
 
 	clear_from_NC(ROW_BEGIN, 0);
 
-	mvprintw(row++, 2, "x for y = 0: %0.6lf", x_for_y0);
+	mvprintw(row++, 2, "x for y = 0: %0.6lf", xs_4_y0[0]);
+	if( (x_validity&2) ) printw(",  %0.3lf", xs_4_y0[1]);
+	if( (x_validity&4) ) printw( ", %0.3lf", xs_4_y0[2]);
+
 	mvprintw(row++, 2, "4*a^3 + 27*b^2 = %0.1lf  (%d, %d)", critical_prop, ec.a, ec.b);
 	if(command == 0){
 		mvprintw(row++, 1, "Plot EC");
@@ -123,7 +127,7 @@ void wait_for_click(const int key_code){
 void instruction(){
 	struct ec_parameters ec;
 
-	ec_init(&ec);
+	ec_init(&ec, -1);
 	ec.a = 17;
 
 	mvprintw(0, 4, "EC equation draw - introduction.");
