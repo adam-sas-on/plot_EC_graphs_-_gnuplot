@@ -21,7 +21,7 @@ Presents equation $Y^2 = x^3 + a*x + b$ where one can change parameters:
 ```
 EC: y^2 = x^3 - 43*x + 114
 ```
-Presents x value for point on the head of graph:
+Presents x value(s) for point(s) where y = 0 (also on the head of graph):
 ```
   x for y = 0: -7.613966
 ```
