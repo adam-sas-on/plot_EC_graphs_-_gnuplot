@@ -25,11 +25,10 @@ int draw_start(int ac, char**av){
 void run(){
 	FILE *gplot = popen("gnuplot", "w");
 	struct ec_parameters ec;
-	double x_for_y0;
-	int c, cmd = 0;//, scr_h;
+	int c, cmd = 0, validity;//, scr_h;
 	char run = 1, a_or_b = 1;
 
-	ec_init(&ec);
+	ec_init(&ec, 101);
 
 	if(gplot == NULL){
 		closeNC();
@@ -39,8 +38,8 @@ void run(){
 	simple_print(0, 4, "EC equation draw.");
 
 	while(run){
-		x_for_y0 = x_4_y0( (double)ec.a, (double)ec.b);
-		print_menu(cmd, ec, x_for_y0, critical_proportion( (double)ec.a, (double)ec.b), a_or_b);
+		validity = all_xs_4_y0(ec.xs_4_y0, (double)ec.a, (double)ec.b);
+		print_menu(cmd, ec, validity, critical_proportion( (double)ec.a, (double)ec.b), a_or_b);
 
 		c = get_input_modify(&cmd, 3, &a_or_b);
 
@@ -85,6 +84,7 @@ void run(){
 	}
 
 	closeNC();
+	ec_free(ec);
 	pclose(gplot);
 }
 
