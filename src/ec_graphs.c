@@ -112,16 +112,47 @@ double critical_proportion(const double a, const double b){
 	return a*a*a*4.0 + b*b*27.0;// hope != 0;
 }
 
-void set_symmetric_points(double *points/*[n]*/, const unsigned n, const double a, const double b, const double precision){
-	unsigned i;
+unsigned set_symmetric_points(double *points/*[n]*/, const unsigned n, const double a, const double b, const double precision){
+	double xs[3], b2 = b, ystep = 0.0;
+	unsigned i = 1, j, validity, count_xs;
 
-	if(n < 1) return;
+	if(n < 1) return 0;
 
-	if( (n&1) ) i = n/2;
-	else i = n/2 - 1;
+	validity = all_xs_4_y0(xs/*[3]*/, a, b2);
+	count_xs = 1;
+	if( (validity&2) ) count_xs++;
+	if( (validity&4) ) count_xs++;
+	for(j = 0; j < count_xs && i < n; j++, i+=2){
+		points[i-1] = xs[j];
+		points[ i ] = 0.0;
+	}
 
-	points[i] = x_4_y0(a, b);
-// TODOs: x_4_y0() on the middle of array points[], and then upper and lower points by step = precision;
+	while(i < n){
+		ystep += precision;
+		b2 = b - ystep*ystep;
+
+		validity = all_xs_4_y0(xs, a, b2);
+		count_xs = 1;
+		if( (validity&2) ) count_xs++;
+		if( (validity&4) ) count_xs++;
+
+		j = 0;
+		while(j < count_xs && i < n){
+			points[i-1] = xs[j];
+			points[ i ] = ystep;
+			i += 2;
+
+			if(i < n){
+				points[i-1] = xs[j];
+				points[ i ] = -1.0*ystep;
+				i += 2;
+			}
+
+			j++;
+		}
+	}
+
+	return (i - 1)/2;
 }
 
 void ec_free(struct ec_parameters ec){
