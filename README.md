@@ -11,13 +11,13 @@ apt-get install gnuplot
 ```
 
 ### Another requirements.
-Program includes terminal API library called ncurses, to install it type e.g.:
+Program includes programming library called ncurses which provides terminal API, to install it type e.g.:
 ```bash
 apt-get install libncurses5-dev
 ```
 
 ## Usage
-Presents equation $Y^2 = x^3 + a*x + b$ where one can change parameters:
+Presents equation $$y^2 = x^3 + a x + b$$ where one can change parameters:
 ```
 EC: y^2 = x^3 - 43*x + 114
 ```
@@ -48,5 +48,6 @@ Press  enter  to exit
 ```
 
 ## TODOs
-Include plotting more points.
+Changing number of points and their precision.
+Stepping on points to e.g. show their coordinates and plot the tangent line (optional).
 
