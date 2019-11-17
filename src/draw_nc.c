@@ -25,6 +25,7 @@ int draw_start(int ac, char**av){
 void run(){
 	FILE *gplot = popen("gnuplot", "w");
 	struct ec_parameters ec;
+	unsigned i, count_points;
 	int c, cmd = 0, validity;//, scr_h;
 	char run = 1, a_or_b = 1;
 
@@ -34,6 +35,8 @@ void run(){
 		closeNC();
 		return ;
 	}
+	fprintf(gplot, "set grid back\n");
+
 
 	simple_print(0, 4, "EC equation draw.");
 
@@ -71,7 +74,19 @@ void run(){
 		  case '\n':
 			if(cmd == 2) run = 0;
 			else {
-				fprintf(gplot, "plot sqrt(x**3+%d*x+%d) w l t \"upper EC\", -sqrt(x**3+%d*x+%d) w l t \"bottom EC\"\n", ec.a, ec.b, ec.a, ec.b);
+				count_points = set_symmetric_points(ec.points, ec.n, (double)ec.a, (double)ec.b, 2.0);
+
+				fprintf(gplot, "plot sqrt(x**3+%d*x+%d) w l t \"upper EC\", -sqrt(x**3+%d*x+%d) w l t \"bottom EC\"", ec.a, ec.b, ec.a, ec.b);
+
+				for(i = 0; i < count_points; i++){
+					fprintf(gplot, ", '-' w p pointtype 12 ps 2 linecolor 4 lw 2 t \"\"");
+				}
+				fprintf(gplot, "\n");
+
+				for(i = 0; i < count_points; i++){
+					fprintf(gplot, "%0.3lf %0.3lf\n", ec.points[i*2], ec.points[i*2 + 1]);
+					fprintf(gplot, "e\n");
+				}
 				fflush(gplot);
 			}
 			break;
