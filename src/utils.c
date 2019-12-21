@@ -5,12 +5,16 @@
 #define SIZE_64 6
 #define SIZE_RAND 5
 
+unsigned sizeof_2_strings(char *prefix, char *suffix){
+	return (unsigned)( strlen(prefix) + strlen(suffix) );
+}
+
 void rand_string(char *word/*[n]*/, char *prefix, char *suffix, const unsigned n){
 	unsigned rnd[SIZE_RAND+1];
 	char signs[65], *word_rest;
 	unsigned i, j, n_rest, s_index, bit0, bit_count;
 	char c;
-	const unsigned uint_size = 8*sizeof(unsigned), const unsigned uint_max = (unsigned)(~0);
+	const unsigned uint_size = 8*sizeof(unsigned), uint_max = (unsigned)(~0);
 
 	srand((unsigned)time(NULL));
 	memset(word, '\0', n*sizeof(char));
