@@ -28,7 +28,7 @@ void run(){
 	FILE *gplot = popen("gnuplot", "w");
 	struct ec_parameters ec;
 	char *file_name = NULL;
-	unsigned i, count_points, name_length;
+	unsigned count_points, name_length;
 	int c, cmd = 0, validity;//, scr_h;
 	char run = 1, a_or_b = 1;
 
@@ -88,18 +88,17 @@ void run(){
 			if(cmd == 2) run = 0;
 			else {
 				count_points = set_symmetric_points(ec.points, ec.n, (double)ec.a, (double)ec.b, 2.0);
+				if(count_points > 0)
+					validity = points_to_file(file_name, ec);
+
 
 				fprintf(gplot, "plot sqrt(x**3+%d*x+%d) w l t \"upper EC\", -sqrt(x**3+%d*x+%d) w l t \"bottom EC\"", ec.a, ec.b, ec.a, ec.b);
 
-				for(i = 0; i < count_points; i++){
-					fprintf(gplot, ", '-' w p pointtype 12 ps 2 linecolor 4 lw 2 t \"\"");
-				}
-				fprintf(gplot, "\n");
+				if(validity)
+					fprintf(gplot, ", '%s' w p pointtype 12 ps 2 linecolor 4 lw 2 t \"\"\n", file_name);
+				else
+					fprintf(gplot, "\n");
 
-				for(i = 0; i < count_points; i++){
-					fprintf(gplot, "%0.3lf %0.3lf\n", ec.points[i*2], ec.points[i*2 + 1]);
-					fprintf(gplot, "e\n");
-				}
 				fflush(gplot);
 			}
 			break;
@@ -114,8 +113,10 @@ void run(){
 	closeNC();
 
 	ec_free(ec);
-	if(name_length)
+	if(name_length){
+		remove(file_name);
 		free((void*)file_name);
+	}
 
 	pclose(gplot);
 }
