@@ -6,12 +6,12 @@
 
 void ui_start(){
 	initscr();
-	raw();// * zeby nie trzeba bylo naciskac [enter];
+	raw();// * so that [enter] does not have to be pressed;
 	keypad(stdscr, TRUE);// * to get F1, F2 etc..;
 	noecho();
 }
 
-//Struct names and typedef's in camelcase: GtkWidget, TrackingOrder; other lower case.
+
 void clear_from_NC(const int row_begin, const int col_begin){
 	move(row_begin, col_begin);
 	clrtobot();
@@ -164,6 +164,27 @@ void instruction(){
 	attroff(A_BOLD);
 	wait_for_click('\n');
 	clear_from_NC(0, 0);
+}
+
+int points_to_file(char *file_name, struct ec_parameters ec){
+	FILE *fpoints = NULL;
+	double *points = ec.points;
+	unsigned i;
+
+	if(ec.n < 2) return -1;
+
+	fpoints = fopen(file_name, "w");
+	if(fpoints == NULL) return -2;
+
+	i = 1;
+	while(i < ec.n){
+		fprintf(fpoints, "%0.6lf\t%0.6lf\n", points[i-1], points[i]);
+		i += 2;
+	}
+
+	fclose(fpoints);
+
+	return 1;
 }
 
 void closeNC(){
