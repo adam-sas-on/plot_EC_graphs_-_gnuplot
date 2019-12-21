@@ -88,13 +88,14 @@ void run(){
 			if(cmd == 2) run = 0;
 			else {
 				count_points = set_symmetric_points(ec.points, ec.n, (double)ec.a, (double)ec.b, 2.0);
-				if(count_points > 0)
+				if(count_points > 0 && name_length > 0)
 					validity = points_to_file(file_name, ec);
+				else validity = 0;
 
 
 				fprintf(gplot, "plot sqrt(x**3+%d*x+%d) w l t \"upper EC\", -sqrt(x**3+%d*x+%d) w l t \"bottom EC\"", ec.a, ec.b, ec.a, ec.b);
 
-				if(validity)
+				if(validity > 0)
 					fprintf(gplot, ", '%s' w p pointtype 12 ps 2 linecolor 4 lw 2 t \"\"\n", file_name);
 				else
 					fprintf(gplot, "\n");
