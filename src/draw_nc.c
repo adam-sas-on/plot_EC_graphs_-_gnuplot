@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include "../include/ec_graphs.h"
 #include "../include/ui.h"
+#include "../include/utils.h"
 
+#define REST_NAME_LENGTH 16
 
 int draw_start(int ac, char**av){
 	FILE *gnuplot = NULL;
@@ -25,11 +27,10 @@ int draw_start(int ac, char**av){
 void run(){
 	FILE *gplot = popen("gnuplot", "w");
 	struct ec_parameters ec;
-	unsigned i, count_points;
+	char *file_name = NULL;
+	unsigned i, count_points, name_length;
 	int c, cmd = 0, validity;//, scr_h;
 	char run = 1, a_or_b = 1;
-
-	ec_init(&ec, 101);
 
 	if(gplot == NULL){
 		closeNC();
@@ -37,6 +38,15 @@ void run(){
 	}
 	fprintf(gplot, "set grid back\n");
 
+
+	ec_init(&ec, 101);
+
+	if(ec.n > 1){
+		name_length = sizeof_2_strings("temp_", ".txt") + REST_NAME_LENGTH;
+		file_name = (char*)calloc(name_length + 1, sizeof(char));
+
+		if(file_name == NULL) name_length = 0;
+	} else name_length = 0;
 
 	simple_print(0, 4, "EC equation draw.");
 
@@ -99,7 +109,11 @@ void run(){
 	}
 
 	closeNC();
+
 	ec_free(ec);
+	if(name_length)
+		free((void*)file_name);
+
 	pclose(gplot);
 }
 
