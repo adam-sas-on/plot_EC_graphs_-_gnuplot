@@ -45,7 +45,10 @@ void run(){
 		name_length = sizeof_2_strings("temp_", ".txt") + REST_NAME_LENGTH;
 		file_name = (char*)calloc(name_length + 1, sizeof(char));
 
-		if(file_name == NULL) name_length = 0;
+		if(file_name == NULL)
+			name_length = 0;
+		else
+			rand_string(file_name, "temp_", ".txt", name_length);
 	} else name_length = 0;
 
 	simple_print(0, 4, "EC equation draw.");
