@@ -1,10 +1,13 @@
-#include "../include/ec_graphs.h"
 #include <stdlib.h>
 #include <math.h>
+#include "../include/structures.h"
 
 #define SWAP(a, b) dumm=(a); (a)=(b); (b)=dumm
 
-void ec_init(struct ec_parameters *ec, const int memSize){
+void ec_init(struct ec_parameters *ec, const int pointsCount){
+	void *buf = NULL;
+	int bufSize;
+
 	ec->a = 486662;
 	ec->b = 1;
 	ec->sign1 = ec->sign2 = 1;
@@ -12,11 +15,15 @@ void ec_init(struct ec_parameters *ec, const int memSize){
 	ec->points = NULL;
 	ec->n = 0;
 
-	if(memSize >= 0){// if we want to alloc memory;
-		ec->xs_4_y0 = (double*)calloc(memSize + 3, sizeof(double));
-		if(ec->xs_4_y0 != NULL){
-			ec->points = (ec->xs_4_y0) + 3;
-			ec->n = (unsigned)memSize;
+	if(pointsCount >= 0){// if we want to alloc memory;
+		bufSize = 3*sizeof(double) + pointsCount*sizeof(struct point);
+		buf = calloc(bufSize, sizeof(char) );
+		ec->xs_4_y0 = (double*)buf;
+
+		if(buf != NULL){
+			bufSize = 3*sizeof(double);
+			ec->points = (struct point*)(buf + bufSize);
+			ec->n = (unsigned)pointsCount;
 		}
 	}
 }
@@ -112,7 +119,7 @@ double critical_proportion(const double a, const double b){
 	return a*a*a*4.0 + b*b*27.0;// hope != 0;
 }
 
-unsigned set_symmetric_points(double *points/*[n]*/, const unsigned n, const double a, const double b, const double precision){
+unsigned set_symmetric_points(struct point *points/*[n]*/, const unsigned n, const double a, const double b, const double precision){
 	double xs[3], b2 = b, ystep = 0.0;
 	unsigned i = 1, j, validity, count_xs;
 
@@ -122,9 +129,9 @@ unsigned set_symmetric_points(double *points/*[n]*/, const unsigned n, const dou
 	count_xs = 1;
 	if( (validity&2) ) count_xs++;
 	if( (validity&4) ) count_xs++;
-	for(j = 0; j < count_xs && i < n; j++, i+=2){
-		points[i-1] = xs[j];
-		points[ i ] = 0.0;
+	for(i = 0; i < count_xs && i < n; i++){
+		(points + i)->x = xs[i];
+		(points + i)->y = 0.0;
 	}
 
 	while(i < n){
@@ -138,21 +145,21 @@ unsigned set_symmetric_points(double *points/*[n]*/, const unsigned n, const dou
 
 		j = 0;
 		while(j < count_xs && i < n){
-			points[i-1] = xs[j];
-			points[ i ] = ystep;
-			i += 2;
+			(points + i)->x = xs[j];
+			(points + i)->y = ystep;
+			i++;
 
 			if(i < n){
-				points[i-1] = xs[j];
-				points[ i ] = -1.0*ystep;
-				i += 2;
+				(points + i)->x = xs[j];
+				(points + i)->y = -1.0*ystep;
+				i++;
 			}
 
 			j++;
 		}
 	}
 
-	return (i - 1)/2;
+	return i;
 }
 
 void ec_free(struct ec_parameters ec){

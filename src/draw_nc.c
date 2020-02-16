@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/structures.h"
 #include "../include/ec_graphs.h"
 #include "../include/ui.h"
 #include "../include/utils.h"
 
 #define REST_NAME_LENGTH 16
+#define POINTS_TO_PLOT 91
 
 int draw_start(int ac, char**av){
 	FILE *gnuplot = NULL;
@@ -39,7 +41,7 @@ void run(){
 	fprintf(gplot, "set grid back\n");
 
 
-	ec_init(&ec, 101);
+	ec_init(&ec, POINTS_TO_PLOT);
 
 	if(ec.n > 1){
 		name_length = sizeof_2_strings("temp_", ".txt") + REST_NAME_LENGTH;
@@ -96,9 +98,9 @@ void run(){
 				fprintf(gplot, "plot sqrt(x**3+%d*x+%d) w l t \"upper EC\", -sqrt(x**3+%d*x+%d) w l t \"bottom EC\"", ec.a, ec.b, ec.a, ec.b);
 
 				if(validity > 0)
-					fprintf(gplot, ", '%s' w p pointtype 12 ps 2 linecolor 4 lw 2 t \"\"\n", file_name);
-				else
-					fprintf(gplot, "\n");
+					fprintf(gplot, ", '%s' w p pointtype 12 ps 2 linecolor 4 lw 2 t \"\"", file_name);
+
+				fprintf(gplot, ", '-' w p pointtype 8 ps 2 linecolor 3 lw 4 t\"[%0.2lf, 0.0]\"\n%0.3lf 0.0\ne\n", ec.xs_4_y0[0], ec.xs_4_y0[0]);
 
 				fflush(gplot);
 			}

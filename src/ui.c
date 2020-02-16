@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <stdio.h>
+#include "../include/structures.h"
 #include "../include/ec_graphs.h"
 
 #define ROW_BEGIN 2
@@ -168,7 +169,7 @@ void instruction(){
 
 int points_to_file(char *file_name, struct ec_parameters ec){
 	FILE *fpoints = NULL;
-	double *points = ec.points;
+	struct point *points = ec.points;
 	unsigned i;
 
 	if(ec.n < 2) return -1;
@@ -176,10 +177,8 @@ int points_to_file(char *file_name, struct ec_parameters ec){
 	fpoints = fopen(file_name, "w");
 	if(fpoints == NULL) return -2;
 
-	i = 1;
-	while(i < ec.n){
-		fprintf(fpoints, "%0.6lf\t%0.6lf\n", points[i-1], points[i]);
-		i += 2;
+	for(i = 0; i < ec.n; i++){
+		fprintf(fpoints, "%0.6lf\t%0.6lf\n", (points+i)->x, (points+i)->y);
 	}
 
 	fclose(fpoints);
