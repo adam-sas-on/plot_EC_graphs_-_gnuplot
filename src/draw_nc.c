@@ -13,6 +13,7 @@ int draw_start(int ac, char**av){
 	FILE *gnuplot = NULL;
 	int c;
 	struct option options[] = {
+		{"points", required_argument, NULL, 'n'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
@@ -25,7 +26,7 @@ int draw_start(int ac, char**av){
 
 	pclose(gnuplot);
 
-	while( (c = getopt_long(ac, av, "h", options, NULL) )>=0 ){
+	while( (c = getopt_long(ac, av, "n:h", options, NULL) )>=0 ){
 		switch(c){
 			case 'h':
 				usage(av[0]);

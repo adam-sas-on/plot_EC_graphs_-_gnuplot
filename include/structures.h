@@ -12,8 +12,9 @@ struct ec_parameters {
 	char sign1;
 	char sign2;
 	double *xs_4_y0;// [3];
-	struct point *points;// [n];
+	struct point *points;// [maxPoints];
 	unsigned n;
+	unsigned maxPoints;
 };
 
 #endif

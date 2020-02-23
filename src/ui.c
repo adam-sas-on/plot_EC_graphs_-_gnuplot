@@ -170,6 +170,8 @@ void instruction(){
 void usage(char *app_name){
 	printf("%s: application to plot elliptic curves (EC; build date: %s);\n  it requires gnuplot application to be installed.\n", app_name, __DATE__);
 	puts("\tOptions:");
+	puts("-n (--points) n: set number of points to plot into n.\n\
+	It limits maximum number of points into 2*n but minimum 200. Default n = 91.\n");
 	puts("-h (--help): prints this help.\n\n\tScreen menu with description");
 
 	puts("\t- pressing up and down arrows switches command;\n\t- pressing  enter  executes the command.\n");
