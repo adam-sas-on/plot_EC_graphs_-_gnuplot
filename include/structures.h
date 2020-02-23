@@ -1,6 +1,9 @@
 #ifndef STRUCTURES
 #define STRUCTURES
 
+#define MINIMUM_LIMIT_FOR_POINTS 200
+#define POINTS_TO_PLOT 91
+
 struct point {
 	double x;
 	double y;
@@ -14,7 +17,7 @@ struct ec_parameters {
 	double *xs_4_y0;// [3];
 	struct point *points;// [maxPoints];
 	unsigned n;
-	unsigned maxPoints;
+	unsigned max_points;
 };
 
 #endif
