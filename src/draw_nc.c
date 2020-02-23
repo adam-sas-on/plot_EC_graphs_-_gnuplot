@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include "../include/structures.h"
 #include "../include/ec_graphs.h"
 #include "../include/ui.h"
@@ -10,6 +11,11 @@
 
 int draw_start(int ac, char**av){
 	FILE *gnuplot = NULL;
+	int c;
+	struct option options[] = {
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	gnuplot = popen("gnuplot", "w");
 	if(gnuplot == NULL){
@@ -18,6 +24,14 @@ int draw_start(int ac, char**av){
 	}
 
 	pclose(gnuplot);
+
+	while( (c = getopt_long(ac, av, "h", options, NULL) )>=0 ){
+		switch(c){
+			case 'h':
+				usage(av[0]);
+				return 2;
+		}
+	}
 
 	ui_start();
 

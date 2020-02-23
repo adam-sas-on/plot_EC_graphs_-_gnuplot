@@ -167,6 +167,28 @@ void instruction(){
 	clear_from_NC(0, 0);
 }
 
+void usage(char *app_name){
+	printf("%s: application to plot elliptic curves (EC; build date: %s);\n  it requires gnuplot application to be installed.\n", app_name, __DATE__);
+	puts("\tOptions:");
+	puts("-h (--help): prints this help.\n\n\tScreen menu with description");
+
+	puts("\t- pressing up and down arrows switches command;\n\t- pressing  enter  executes the command.\n");
+	puts("\"EC: y^2 = x^3 - 48*x + 128\"");
+	puts("\t- pressing  right and left arrows switches between parameters 'a' and 'b';\n\
+	- pressing any number or  backspace  changes the value of selected parameter;\n\
+	- pressing '+'/'-' changes the sign of selected parameter;\n\
+	- pressing  enter  plots EC function.");
+
+	puts("  \"x for y = 0: -8.000000,  4.000\"");
+	puts("\t- presents x value(s) for point(s) where y = 0.");
+
+	puts("  \"4*a^3 + 27*b^2 = 0.0  (-48, 128)\"");
+	puts("\t- computes the value of important parameter for Elliptic Curves.");
+
+	puts(" \"Plot EC\"\n\t- pressing enter plots the equation.");
+	puts(" \"Exit\"\n\t- pressing enter exits this application.");
+}
+
 int points_to_file(char *file_name, struct ec_parameters ec){
 	FILE *fpoints = NULL;
 	struct point *points = ec.points;
