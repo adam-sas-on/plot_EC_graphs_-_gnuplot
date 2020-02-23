@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 #include "../include/structures.h"
 #include "../include/ec_graphs.h"
 #include "../include/ui.h"
 #include "../include/utils.h"
 
 #define REST_NAME_LENGTH 16
-#define POINTS_TO_PLOT 91
 
-int draw_start(int ac, char**av){
+int draw_start(int ac, char**av, unsigned *points_to_plot){
 	FILE *gnuplot = NULL;
 	int c;
 	struct option options[] = {
@@ -26,8 +26,16 @@ int draw_start(int ac, char**av){
 
 	pclose(gnuplot);
 
+	*points_to_plot = POINTS_TO_PLOT;
+
 	while( (c = getopt_long(ac, av, "n:h", options, NULL) )>=0 ){
 		switch(c){
+			case 'n':
+				c = atoi(optarg);
+				if(c <= 0) *points_to_plot = 0;
+				else if(c > 10000) *points_to_plot = 10000;
+				else *points_to_plot = (unsigned)c;
+				break;
 			case 'h':
 				usage(av[0]);
 				return 2;
@@ -41,7 +49,7 @@ int draw_start(int ac, char**av){
 	return 0;
 }
 
-void run(){
+void run(const unsigned points_to_plot){
 	FILE *gplot = popen("gnuplot", "w");
 	struct ec_parameters ec;
 	char *file_name = NULL;
@@ -56,9 +64,9 @@ void run(){
 	fprintf(gplot, "set grid back\n");
 
 
-	ec_init(&ec, POINTS_TO_PLOT);
+	ec_init(&ec, points_to_plot);
 
-	if(ec.n > 1){
+	if(ec.max_points > 1){
 		name_length = sizeof_2_strings("temp_", ".txt") + REST_NAME_LENGTH;
 		file_name = (char*)calloc(name_length + 1, sizeof(char));
 

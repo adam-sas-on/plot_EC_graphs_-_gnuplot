@@ -4,9 +4,9 @@
 
 #define SWAP(a, b) dumm=(a); (a)=(b); (b)=dumm
 
-void ec_init(struct ec_parameters *ec, const int pointsCount){
+void ec_init(struct ec_parameters *ec, const int points_count){
 	void *buf = NULL;
-	int bufSize;
+	int buf_size;
 
 	ec->a = 486662;
 	ec->b = 1;
@@ -14,17 +14,24 @@ void ec_init(struct ec_parameters *ec, const int pointsCount){
 	ec->xs_4_y0 = NULL;
 	ec->points = NULL;
 	ec->n = 0;
+	ec->max_points = MINIMUM_LIMIT_FOR_POINTS;
 
-	if(pointsCount >= 0){// if we want to alloc memory;
-		bufSize = 3*sizeof(double) + pointsCount*sizeof(struct point);
-		buf = calloc(bufSize, sizeof(char) );
-		ec->xs_4_y0 = (double*)buf;
+	if(points_count > 0){
+		ec->n = (unsigned)points_count;
+		buf_size = points_count*2;
+		ec->max_points = (buf_size > MINIMUM_LIMIT_FOR_POINTS)?buf_size:MINIMUM_LIMIT_FOR_POINTS;
+	}
 
-		if(buf != NULL){
-			bufSize = 3*sizeof(double);
-			ec->points = (struct point*)(buf + bufSize);
-			ec->n = (unsigned)pointsCount;
-		}
+	buf_size = 3*sizeof(double) + (ec->max_points)*sizeof(struct point);
+	buf = calloc(buf_size, sizeof(char) );
+
+	ec->xs_4_y0 = (double*)buf;
+
+	if(buf != NULL){
+		buf_size = 3*sizeof(double);
+		ec->points = (struct point*)(buf + buf_size);
+	} else {
+		ec->n = ec->max_points;
 	}
 }
 
