@@ -25,7 +25,7 @@ Presents x value(s) for point(s) where y = 0 (also on the head of graph):
 ```
   x for y = 0: -7.613966
 ```
-Computes the value of important parameter for Elliptic Curves:
+Computes the value of discriminant parameter for Elliptic Curves:
 ```
   4*a^3 + 27*b^2 = 32864.0  (-43, 114)
 ```

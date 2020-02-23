@@ -183,7 +183,7 @@ void usage(char *app_name){
 	puts("\t- presents x value(s) for point(s) where y = 0.");
 
 	puts("  \"4*a^3 + 27*b^2 = 0.0  (-48, 128)\"");
-	puts("\t- computes the value of important parameter for Elliptic Curves.");
+	puts("\t- computes the value of discriminant parameter for Elliptic Curves.");
 
 	puts(" \"Plot EC\"\n\t- pressing enter plots the equation.");
 	puts(" \"Exit\"\n\t- pressing enter exits this application.");
