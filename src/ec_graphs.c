@@ -74,7 +74,7 @@ int all_xs_4_y0(double *xs/*[3]*/, const double a, const double b){
 	dumm = a*a*a/27.0;
 	xs[0] = sqr + dumm;
 
-	if(xs[0] > 0.0){
+	if(xs[0] > 0.0 || a == 0.0){
 		sqr = sqrt(xs[0]);
 		dumm = -0.5*b;
 		xs[0] = cbrt(dumm + sqr) + cbrt(dumm - sqr);
