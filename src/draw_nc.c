@@ -52,6 +52,7 @@ int draw_start(int ac, char**av, unsigned *points_to_plot){
 void run(const unsigned points_to_plot){
 	FILE *gplot = popen("gnuplot", "w");
 	struct ec_parameters ec;
+	double precision;
 	char *file_name = NULL;
 	unsigned count_points, name_length;
 	int c, cmd = 0, validity;//, scr_h;
@@ -65,6 +66,8 @@ void run(const unsigned points_to_plot){
 
 
 	ec_init(&ec, points_to_plot);
+	precision = ec.precision_numerator / (double)(ec.precision_denominator);
+
 
 	if(ec.max_points > 1){
 		name_length = sizeof_2_strings("temp_", ".txt") + REST_NAME_LENGTH;
@@ -82,13 +85,19 @@ void run(const unsigned points_to_plot){
 		validity = all_xs_4_y0(ec.xs_4_y0, (double)ec.a, (double)ec.b);
 		print_menu(cmd, ec, validity, critical_proportion( (double)ec.a, (double)ec.b), a_or_b);
 
-		c = get_input_modify(&cmd, 3, &a_or_b);
+		c = get_input_modify(&cmd, 4, &a_or_b, &ec);
+		precision = 1.0/(double)(ec.precision_denominator) * (double)(ec.precision_numerator);
 
 		switch(c){
 		  case 127:
 			if(cmd == 0){
 				if(a_or_b == 1) ec.a = ec.a/10;
 				else ec.b = ec.b/10;
+			} else if(cmd == 1){
+				ec.precision_numerator /= 10;
+				ec.precision_denominator /= 10;
+				if(ec.precision_denominator == 0)
+					ec.precision_denominator = 1;
 			}
 			break;
 		  case '+':
@@ -110,9 +119,9 @@ void run(const unsigned points_to_plot){
 			}
 			break;
 		  case '\n':
-			if(cmd == 2) run = 0;
+			if(cmd == 3) run = 0;
 			else {
-				count_points = set_symmetric_points(ec.points, ec.n, (double)ec.a, (double)ec.b, 2.0);
+				count_points = set_symmetric_points(ec.points, ec.n, (double)ec.a, (double)ec.b, precision);
 				if(count_points > 0 && name_length > 0)
 					validity = points_to_file(file_name, ec);
 				else validity = 0;
@@ -129,9 +138,14 @@ void run(const unsigned points_to_plot){
 			}
 			break;
 		  default:
-			if(c >= '0' && c <= '9' && cmd == 0){
-				if(a_or_b == 1) ec.a = ec.a*10 + ( (int)ec.sign1)*(c - '0');
-				else ec.b = ec.b*10 + ( (int)ec.sign2)*(c - '0');
+			if(c >= '0' && c <= '9'){
+				if(cmd == 0){
+					if(a_or_b == 1) ec.a = ec.a*10 + ( (int)ec.sign1)*(c - '0');
+					else ec.b = ec.b*10 + ( (int)ec.sign2)*(c - '0');
+				} else if(cmd == 1){
+					ec.precision_numerator = ec.precision_numerator*10 + (c - '0');
+					ec.precision_denominator *= 10;
+				}
 			}
 		}
 	}
