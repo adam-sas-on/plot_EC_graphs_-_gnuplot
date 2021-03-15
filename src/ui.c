@@ -60,6 +60,7 @@ void printw_equation(struct ec_parameters ec, const char a_or_b){
 void print_menu(const int command, struct ec_parameters ec, const int x_validity, const double critical_prop, const char a_or_b){
 	double *xs_4_y0 = ec.xs_4_y0;
 	int row = ROW_BEGIN + 1;
+	const double precision = 1.0/(double)(ec.precision_denominator) * (double)(ec.precision_numerator);
 
 	clear_from_NC(ROW_BEGIN, 0);
 
@@ -69,17 +70,29 @@ void print_menu(const int command, struct ec_parameters ec, const int x_validity
 
 	mvprintw(row++, 2, "4*a^3 + 27*b^2 = %0.1lf  (%d, %d)", critical_prop, ec.a, ec.b);
 	if(command == 0){
+		mvprintw(row++, 1, "Precision:  %0.4lf", precision);
 		mvprintw(row++, 1, "Plot EC");
 		mvprintw( row , 1, "Exit");
 		printw_equation(ec, a_or_b);
 	} else if(command == 1){
 		printw_equation(ec, 0);
-		mvprintw(row+1, 1, "Exit");
+		mvprintw(row + 1 , 1, "Plot EC");
+		mvprintw(row + 2, 1, "Exit");
+
+		mvprintw( row , 1, "Precision:  ");
 		attron(A_BOLD);
-		mvprintw( row , 1, "Plot EC");
+		printw("%0.4lf", precision);
+		attroff(A_BOLD);
+	} else if(command == 2){
+		printw_equation(ec, 0);
+		mvprintw( row , 1, "Precision:  %0.4lf", precision);
+		mvprintw(row + 2, 1, "Exit");
+		attron(A_BOLD);
+		mvprintw(row + 1, 1, "Plot EC");
 		attroff(A_BOLD);
 	} else {
 		printw_equation(ec, 0);
+		mvprintw(row++, 1, "Precision:  %0.4lf", precision);
 		mvprintw(row++, 1, "Plot EC");
 		attron(A_BOLD);
 		mvprintw( row , 1, "Exit");
@@ -88,7 +101,8 @@ void print_menu(const int command, struct ec_parameters ec, const int x_validity
 
 }
 
-int get_input_modify(int *command, const int command_limit, char *a_or_b){
+int get_input_modify(int *command, const int command_limit, char *a_or_b, struct ec_parameters *ec){
+	double precision;
 	int c;
 
 	c=getch();
@@ -106,9 +120,25 @@ int get_input_modify(int *command, const int command_limit, char *a_or_b){
 		break;
 	  case KEY_RIGHT:
 		if(*command == 0) *a_or_b = 2;
+		else if(*command == 1){
+			ec->precision_denominator = 10*(ec->precision_denominator);
+		}
 		break;
 	  case KEY_LEFT:
 		if(*command == 0) *a_or_b = 1;
+		else if(*command == 1){
+			precision = 10.0/(double)(ec->precision_denominator) * (double)(ec->precision_numerator);
+			ec->precision_denominator = (ec->precision_denominator) / 10;
+
+			if(ec->precision_denominator == 0){
+				ec->precision_numerator = 10*(ec->precision_numerator);
+				ec->precision_denominator = 1;
+			}
+			if(ec->precision_numerator > MAX_PRECISION || precision > MAX_PRECISION){
+				ec->precision_numerator = MAX_PRECISION;
+				ec->precision_denominator = 1;
+			}
+		}
 		break;
 	}
 
@@ -153,6 +183,17 @@ void instruction(){
 
 	attron(A_BOLD);
 	mvprintw(ROW_BEGIN + 5, 1, "Press enter for next instruction");
+	attroff(A_BOLD);
+	wait_for_click('\n');
+
+
+	clear_from_NC(ROW_BEGIN, 0);
+	printw_equation(ec, 0);
+	mvprintw(ROW_BEGIN + 1, 3, "Pressing any number or  backspace  changes the size of precision.");
+	mvprintw(ROW_BEGIN + 2, 3, "Pressing left or right arrow moves decimal point of the size of precision.");
+
+	attron(A_BOLD);
+	mvprintw(ROW_BEGIN + 3, 1, "Press enter for next instruction");
 	attroff(A_BOLD);
 	wait_for_click('\n');
 
