@@ -15,6 +15,9 @@ void ec_init(struct ec_parameters *ec, const int points_count){
 	ec->points = NULL;
 	ec->n = 0;
 	ec->max_points = MINIMUM_LIMIT_FOR_POINTS;
+	ec->precision_numerator = 2;
+	ec->precision_denominator = 1;
+
 
 	if(points_count > 0){
 		ec->n = (unsigned)points_count;
@@ -130,7 +133,7 @@ unsigned set_symmetric_points(struct point *points/*[n]*/, const unsigned n, con
 	double xs[3], b2 = b, ystep = 0.0;
 	unsigned i = 1, j, validity, count_xs;
 
-	if(n < 1) return 0;
+	if(n < 1 || precision < 1.0e-7) return 0;
 
 	validity = all_xs_4_y0(xs/*[3]*/, a, b2);
 	count_xs = 1;
