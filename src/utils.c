@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "../include/structures.h"
 
 #define SIZE_64 6
 #define SIZE_RAND 5
@@ -76,5 +77,31 @@ void rand_string(char *word/*[n]*/, char *prefix, char *suffix, const unsigned n
 	else {
 		for(j = 0; j < n_rest; j++) word_rest[j] = suffix[j];
 	}
+}
+
+/**
+ * Comparator which provides the array of EC points to be sorted in order that
+ *  lower-right points on EC curve are the first
+ *  and upper-right points of EC are the last ones in array.
+ * @param *d1: first pointer to element in array - struct point;
+ * @param *d2: second pointer to element in array - struct point;
+ * @returns {int}: a number indicating relative order of points (struct point) in sorted array.
+ */
+int ecc_compare(const void *d1, const void *d2){
+	struct point p1, p2 = *(struct point*)d2;
+	p1 = *(struct point*)d1;
+
+	if(p1.y < 0.0 && p2.y >= 0.0)
+		return -1;
+	else if(p1.y >= 0.0 && p2.y < 0.0)
+		return 1;
+	else if(p1.y < 0.0){
+		if(p1.x < p2.x) return 1;
+		else if(p1.x > p2.x) return -1;
+	} else {
+		if(p1.x < p2.x) return -1;
+		else if(p1.x > p2.x) return 1;
+	}
+	return 0;
 }
 
