@@ -122,9 +122,10 @@ void run(const unsigned points_to_plot){
 			if(cmd == 3) run = 0;
 			else {
 				count_points = set_symmetric_points(ec.points, ec.n, (double)ec.a, (double)ec.b, precision);
-				if(count_points > 0 && name_length > 0)
+				if(count_points > 0 && name_length > 0){
+					qsort(ec.points, ec.n, sizeof(struct point), ecc_compare);
 					validity = points_to_file(file_name, ec);
-				else validity = 0;
+				} else validity = 0;
 
 
 				fprintf(gplot, "plot sqrt(x**3+%d*x+%d) w l t \"upper EC\", -sqrt(x**3+%d*x+%d) w l t \"bottom EC\"", ec.a, ec.b, ec.a, ec.b);
